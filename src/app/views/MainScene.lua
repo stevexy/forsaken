@@ -134,6 +134,15 @@ function MainScene:onCreate()
 	end
 
 	local function onKeyReleased(keycode, event)
+		if keycode == cc.KeyCode.KEY_A then
+			self.player.vel_x = 0
+		elseif keycode == cc.KeyCode.KEY_D then
+			self.player.vel_x = 0
+		elseif keycode == cc.KeyCode.KEY_S then
+			self.player.vel_y = 0
+		elseif keycode == cc.KeyCode.KEY_W then
+			self.player.vel_y = 0
+		end
 	end
 
     local listenerKeyboard=cc.EventListenerKeyboard:create()
