@@ -2,6 +2,14 @@
 # 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
 ################################################################################
 
+*.pdb
+
 /simulator/win32
 /runtime/win32
-/frameworks
+/frameworks/cocos2d-x
+/frameworks/runtime-src/proj.android
+/frameworks/runtime-src/proj.android-studio
+/frameworks/runtime-src/proj.ios_mac
+/frameworks/runtime-src/proj.linux
+/frameworks/runtime-src/proj.tizen
+/frameworks/runtime-src/proj.win32/Debug.win32
