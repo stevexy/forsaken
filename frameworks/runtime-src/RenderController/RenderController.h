@@ -6,7 +6,11 @@
 ///
 
 #pragma once
-class RenderController
+#include "cocos2d.h"
+
+
+
+class RenderController: public cocos2d::Ref
 {
 public:
 //	struct Ent;
