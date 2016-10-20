@@ -89,6 +89,7 @@ function MainScene:onCreate()
 	xcontrol:setTouchEnabled(true)
 	self.controller = xcontrol
 
+	self.renderController = cc.RenderController:create()
 	local layer = cc.Layer:create()
 	--layer:setTouchEnabled(true)
 	layer:addTo(self)
@@ -121,6 +122,7 @@ function MainScene:onCreate()
 		if keycode == cc.KeyCode.KEY_A then
 			self.player.vel_x = -1
 			self.player.vel_y = 0
+			print("seayoung test renderController",self.renderController:testGetID())
 		elseif keycode == cc.KeyCode.KEY_D then
 			self.player.vel_x = 1
 			self.player.vel_y = 0

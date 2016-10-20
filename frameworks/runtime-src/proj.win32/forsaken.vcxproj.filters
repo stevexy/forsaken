@@ -41,9 +41,6 @@
     <ClInclude Include="..\Classes\ide-support\RuntimeLuaImpl.h">
       <Filter>Classes</Filter>
     </ClInclude>
-    <ClInclude Include="..\EntityCom\EntityFu.h">
-      <Filter>entity</Filter>
-    </ClInclude>
     <ClInclude Include="..\RenderController\RenderController.h">
       <Filter>renderController</Filter>
     </ClInclude>
@@ -64,9 +61,6 @@
     </ClCompile>
     <ClCompile Include="..\Classes\ide-support\RuntimeLuaImpl.cpp">
       <Filter>Classes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\EntityCom\EntityFu.cpp">
-      <Filter>entity</Filter>
     </ClCompile>
     <ClCompile Include="..\RenderController\RenderController.cpp">
       <Filter>renderController</Filter>
