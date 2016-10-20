@@ -117,7 +117,6 @@ int lua_cocos2dx_RenderComponent_getTestID(lua_State* tolua_S)
 }
 
 
-
 int lua_register_cocos2dx_RenderController(lua_State* tolua_S)
 {
 	tolua_usertype(tolua_S, "cc.RenderController");
