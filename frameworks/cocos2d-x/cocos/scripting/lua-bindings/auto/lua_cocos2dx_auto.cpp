@@ -28410,8 +28410,6 @@ int lua_cocos2dx_DelayTime_constructor(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-
-
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) 
     {
