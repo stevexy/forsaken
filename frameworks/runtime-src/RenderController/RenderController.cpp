@@ -6,6 +6,10 @@
 RenderController::RenderController()
 //	: _messageBoxService(nullptr)
 {
+#if CC_ENABLE_SCRIPT_BINDING
+	ScriptEngineProtocol* engine = ScriptEngineManager::getInstance()->getScriptEngine();
+	_scriptType = engine != nullptr ? engine->getScriptType() : kScriptTypeNone;
+#endif
 }
 
 RenderController::~RenderController()
@@ -23,7 +27,7 @@ RenderController * RenderController::create(void)
 {
 	RenderController *animation = new (std::nothrow) RenderController();
 	animation->init();
-//	animation->autorelease();
+	animation->autorelease();
 
 	return animation;
 }
