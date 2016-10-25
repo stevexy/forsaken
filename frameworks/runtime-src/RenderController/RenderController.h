@@ -9,6 +9,7 @@
 #include "cocos2d.h"
 //#include "base/CCScriptSupport.h"
 
+using namespace cocos2d;
 
 class RenderController: public cocos2d::Ref
 {
@@ -23,10 +24,13 @@ public:
 	static void tick(double fixedDelta);
 	static void animate(double delta, double tickPercent);
 	int testGetID();
+
 protected:
 #if CC_ENABLE_SCRIPT_BINDING
-	cocos2d::ccScriptType _scriptType;         ///< type of script binding, lua or javascript
+	ccScriptType _scriptType;         ///< type of script binding, lua or javascript 
+									///只是用来在消息传递中，或者会调中分清lua 还是 javascript
 #endif
+
 };
 
 int lua_register_cocos2dx_RenderController(lua_State* tolua_S);

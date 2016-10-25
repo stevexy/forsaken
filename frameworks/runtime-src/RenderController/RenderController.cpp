@@ -45,16 +45,53 @@ int RenderController::testGetID()
 	return 101;
 }
 
+
+int lua_cocos2dx_RenderComponent_constructor(lua_State* tolua_S)
+{
+	int argc = 0;
+
+	RenderController* cobj = nullptr;
+	bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
+#endif
+
+	argc = lua_gettop(tolua_S) - 1;
+	if (argc == 0)
+	{
+		if (!ok)
+		{
+			tolua_error(tolua_S, "invalid arguments in function 'lua_cocos2dx_RenderComponent_constructor'", nullptr);
+			return 0;
+		}
+		cobj = new RenderController();
+		cobj->autorelease();
+		int ID = (int)cobj->_ID;
+		int* luaID = &cobj->_luaID;
+		toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj, "cc.RenderController");
+		return 1;
+	}
+	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.RenderController", argc, 0);
+	return 0;
+
+#if COCOS2D_DEBUG >= 1
+	tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_RenderComponent_constructor'.", &tolua_err);
+#endif
+
+	return 0;
+}
+
 int lua_cocos2dx_RenderComponent_create(lua_State* tolua_S)
 {
 	int argc = 0;
 	bool ok = true;
 #if COCOS2D_DEBUG >= 1
-		tolua_Error tolua_err;
+	tolua_Error tolua_err;
 #endif
 
 #if COCOS2D_DEBUG >= 1
-		if (!tolua_isusertable(tolua_S, 1, "cc.RenderController", 0, &tolua_err)) goto tolua_lerror;
+	if (!tolua_isusertable(tolua_S, 1, "cc.RenderController", 0, &tolua_err)) goto tolua_lerror;
 #endif
 
 	argc = lua_gettop(tolua_S) - 1;		
@@ -121,11 +158,18 @@ int lua_cocos2dx_RenderComponent_getTestID(lua_State* tolua_S)
 }
 
 
+static int lua_cocos2dx_RenderController_finalize(lua_State* tolua_S)
+{
+	printf("luabindings: finalizing LUA object (RenderController)");
+	return 0;
+}
+
 int lua_register_cocos2dx_RenderController(lua_State* tolua_S)
 {
 	tolua_usertype(tolua_S, "cc.RenderController");
 	tolua_cclass(tolua_S, "RenderController", "cc.RenderController", "cc.Ref", nullptr);
 	tolua_beginmodule(tolua_S, "RenderController");
+		tolua_function(tolua_S, "new", lua_cocos2dx_RenderComponent_constructor);
 		tolua_function(tolua_S, "testGetID", lua_cocos2dx_RenderComponent_getTestID);
 		tolua_function(tolua_S, "create", lua_cocos2dx_RenderComponent_create);
 	tolua_endmodule(tolua_S);

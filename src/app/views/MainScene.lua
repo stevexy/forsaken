@@ -89,7 +89,17 @@ function MainScene:onCreate()
 	xcontrol:setTouchEnabled(true)
 	self.controller = xcontrol
 
-	self.renderController = cc.RenderController:create()
+
+	local rcer = cc.RenderController:create()
+	self.renderController = rcer
+	rcer:retain()
+	
+
+	--self.testNode = cc.Node:create()
+	--self.testNode:addTo(self)		--这个测试表面了，如果只是create了而没有addto或者通过其他方式附着到某个引擎对象上
+	-- 就会被自动释放，所以我的rendercontroller被释放是正常的现象，所以我要通过某些机制让我的rendercontroller不被自动释放。
+
+
 	local layer = cc.Layer:create()
 	--layer:setTouchEnabled(true)
 	layer:addTo(self)
@@ -97,6 +107,8 @@ function MainScene:onCreate()
     layer:addChild(xmap, 0, kTagTileMap)
     
 	xcontrol:addTo(self)
+--  如果没有addto会不会被自动释放?lua会管理好自动的对象，cocos2d呢？
+
     local _player = Avatar:create()
     self.player = _player
     --xmap:setPosition(cc.p(0,0))
