@@ -2,6 +2,7 @@
 #include "scripting/lua-bindings/manual/CCComponentLua.h"
 #include "scripting/lua-bindings/manual/tolua_fix.h"
 #include "scripting/lua-bindings/manual/LuaBasicConversions.h"
+#include ""
 
 RenderController::RenderController()
 //	: _messageBoxService(nullptr)

@@ -11,7 +11,7 @@
 
 using namespace cocos2d;
 
-class RenderController: public cocos2d::Ref
+class RenderController: public Ref
 {
 public:
 //	struct Ent;

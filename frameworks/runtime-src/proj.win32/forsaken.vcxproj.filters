@@ -44,6 +44,9 @@
     <ClInclude Include="..\RenderController\RenderController.h">
       <Filter>renderController</Filter>
     </ClInclude>
+    <ClInclude Include="..\EntityCom\entityManager.h">
+      <Filter>entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp">
@@ -64,6 +67,9 @@
     </ClCompile>
     <ClCompile Include="..\RenderController\RenderController.cpp">
       <Filter>renderController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\EntityCom\entityManager.cpp">
+      <Filter>entity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
