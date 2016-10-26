@@ -1,23 +1,26 @@
 #include "entityManager.h"
 
-Entity::Entity()
-{
-}
+namespace xyGame {
+	Entity::Entity()
+	{
+	}
 
-Entity::~Entity()
-{
-}
+	Entity::~Entity()
+	{
+	}
 
-bool Entity::init(void)
-{
-	return false;
-}
+	bool Entity::init(void)
+	{
+		return false;
+	}
 
-Entity * Entity::create(void)
-{
-	Entity *pent = new (std::nothrow) Entity();
-	pent->init();
-	pent->autorelease();
+	Entity * Entity::create(void)
+	{
+		Entity *pent = new (std::nothrow) Entity();
+		pent->init();
+		pent->autorelease();
 
-	return pent;
+		return pent;
+	}
+
 }

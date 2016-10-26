@@ -8,29 +8,42 @@
 #pragma once
 #include "cocos2d.h"
 //#include "base/CCScriptSupport.h"
+#include "../EntityCom/entityManager.h"
+#include <map>
 
+using namespace std;
 using namespace cocos2d;
 
-class RenderController: public Ref
-{
-public:
-//	struct Ent;
-	RenderController();
-	~RenderController();
+namespace xyGame {
+	typedef map<unsigned int, Entity *> ENT_MAP;
 
-	bool init(void);
-	static RenderController* create(void);
+	class RenderController : public Ref
+	{
+		ENT_MAP* entity_map= nullptr;
 
-	static void tick(double fixedDelta);
-	static void animate(double delta, double tickPercent);
-	int testGetID();
+	public:
+		//	struct Ent;
+		RenderController();
+		~RenderController();
 
-protected:
+		Entity* createEntity();
+		bool init(void);
+		static RenderController* create(void);
+
+		static void tick(double fixedDelta);
+		static void animate(double delta, double tickPercent);
+
+
+		int testGetID();
+
+	protected:
 #if CC_ENABLE_SCRIPT_BINDING
-	ccScriptType _scriptType;         ///< type of script binding, lua or javascript 
-									///只是用来在消息传递中，或者会调中分清lua 还是 javascript
+		ccScriptType _scriptType;         ///< type of script binding, lua or javascript 
+										///只是用来在消息传递中，或者会调中分清lua 还是 javascript
 #endif
 
-};
+	};
+
+}
 
 int lua_register_cocos2dx_RenderController(lua_State* tolua_S);
