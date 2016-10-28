@@ -19,7 +19,8 @@ namespace xyGame {
 
 	class RenderController : public Ref
 	{
-		ENT_MAP* entity_map= nullptr;
+		static ENT_MAP entity_map;
+		static unsigned int ent_id;
 
 	public:
 		//	struct Ent;
@@ -43,7 +44,6 @@ namespace xyGame {
 #endif
 
 	};
-
 }
 
 int lua_register_cocos2dx_RenderController(lua_State* tolua_S);
