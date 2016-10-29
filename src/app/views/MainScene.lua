@@ -84,16 +84,22 @@ function MainScene:onCreate()
         :move(display.cx, display.cy + 200)
         :addTo(self)
 	
-	print(string.format("seayoung create controller"))
+	print(string.format("seayoung create controller begin"))
 	local xcontrol = self:createController()
 	xcontrol:setTouchEnabled(true)
 	self.controller = xcontrol
 
 
 	local rcer = cc.RenderController:create()
-	self.renderController = rcer
+	
+	local ent = rcer:createEntity()
+	
 	rcer:retain()
 	
+	self.renderController = rcer
+	self.gent = ent
+	
+
 
 	--self.testNode = cc.Node:create()
 	--self.testNode:addTo(self)		--这个测试表面了，如果只是create了而没有addto或者通过其他方式附着到某个引擎对象上
@@ -134,7 +140,8 @@ function MainScene:onCreate()
 		if keycode == cc.KeyCode.KEY_A then
 			self.player.vel_x = -1
 			self.player.vel_y = 0
-			print("seayoung test renderController",self.renderController:testGetID())
+			print("seayoung Entity is ",self.gent)
+			print("seayoung test renderController",self.gent:do_test())
 		elseif keycode == cc.KeyCode.KEY_D then
 			self.player.vel_x = 1
 			self.player.vel_y = 0

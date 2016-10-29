@@ -22,13 +22,18 @@ RenderController::RenderController()
 RenderController::~RenderController()
 {
 	//	CC_SAFE_DELETE(_menuService);
-
+	for (ENT_MAP::iterator it = entity_map.begin(); it != entity_map.end(); ++it)
+	{
+		it->second->release();
+	}
+	entity_map.clear();
 }
 
-Entity * RenderController::createEntity()
+Entity* RenderController::createEntity()
 {
 	Entity *ent = Entity::create();
-	entity_map.insert(ENT_PAIR(ent_id++, ent));
+	entity_map.insert(ENT_PAIR(ent->get_eid(), ent));
+	ent->retain();
 	return ent;
 
 }
@@ -54,12 +59,6 @@ void RenderController::tick(double fixedDelta)
 void RenderController::animate(double delta, double tickPercent)
 {
 }
-
-int RenderController::testGetID()
-{
-	return 101;
-}
-
 
 int lua_cocos2dx_RenderComponent_constructor(lua_State* tolua_S)
 {
@@ -124,15 +123,15 @@ int lua_cocos2dx_RenderComponent_create(lua_State* tolua_S)
 	return 0;
 #if COCOS2D_DEBUG >= 1
 	tolua_lerror:
-				tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_RenderComponent_create'.", &tolua_err);
+	tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_RenderComponent_create'.", &tolua_err);
 #endif
-				return 0;
+	return 0;
 }
 
-int lua_cocos2dx_RenderComponent_getTestID(lua_State* tolua_S)
+int lua_cocos2dx_Entity_getTestID(lua_State* tolua_S)
 {
 	int argc = 0;
-	RenderController* cobj = nullptr;
+	Entity* cobj = nullptr;
 	bool ok = true;
 
 #if COCOS2D_DEBUG >= 1
@@ -141,15 +140,15 @@ int lua_cocos2dx_RenderComponent_getTestID(lua_State* tolua_S)
 
 
 #if COCOS2D_DEBUG >= 1
-	if (!tolua_isusertype(tolua_S, 1, "cc.RenderController", 0, &tolua_err)) goto tolua_lerror;
+	if (!tolua_isusertype(tolua_S, 1, "cc.Entity", 0, &tolua_err)) goto tolua_lerror;
 #endif
 
-	cobj = (RenderController*)tolua_tousertype(tolua_S, 1, 0);
+	cobj = (Entity*)tolua_tousertype(tolua_S, 1, 0);
 
 #if COCOS2D_DEBUG >= 1
 	if (!cobj)
 	{
-		tolua_error(tolua_S, "invalid 'cobj' in function 'lua_cocos2dx_RenderComponent_getTestID'", nullptr);
+		tolua_error(tolua_S, "invalid 'cobj' in function 'lua_cocos2dx_Entity_do_test'", nullptr);
 		return 0;
 	}
 #endif
@@ -157,30 +156,25 @@ int lua_cocos2dx_RenderComponent_getTestID(lua_State* tolua_S)
 	argc = lua_gettop(tolua_S) - 1;
 	if (argc == 0)
 	{
-		int ret = cobj->testGetID();
+		int ret = cobj->do_test();
 		//		lua_settop(tolua_S, 1);
 		tolua_pushnumber(tolua_S, (lua_Number)ret);
 		return 1;
 	}
-	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.Action:testGetID", argc, 1);
+	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.Entity:do_test", argc, 1);
 	return 0;
 
 #if COCOS2D_DEBUG >= 1
 	tolua_lerror:
-				tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_RenderComponent_getTestID'.", &tolua_err);
+	tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_Entity_do_test'.", &tolua_err);
 #endif
 
-				return 0;
-}
-
-
-static int lua_cocos2dx_RenderController_finalize(lua_State* tolua_S)
-{
-	printf("luabindings: finalizing LUA object (RenderController)");
 	return 0;
 }
 
 int lua_cocos2dx_RenderComponent_createEntity(lua_State* tolua_S)
+//函数，创建一个game entity ，返回给脚本对象使用
+// Entity 里面有sprite ，还需要进一步返回entity里面的sprite
 {
 	int argc = 0;
 	RenderController* cobj = nullptr;
@@ -190,7 +184,7 @@ int lua_cocos2dx_RenderComponent_createEntity(lua_State* tolua_S)
 #endif
 
 #if COCOS2D_DEBUG >= 1
-	if (!tolua_isusertable(tolua_S, 1, "cc.RenderController", 0, &tolua_err)) goto tolua_lerror;
+	if (!tolua_isusertype(tolua_S, 1, "cc.RenderController", 0, &tolua_err)) goto tolua_lerror;
 #endif
 
 	cobj = (RenderController*)tolua_tousertype(tolua_S, 1, 0);
@@ -209,7 +203,7 @@ int lua_cocos2dx_RenderComponent_createEntity(lua_State* tolua_S)
 		if (argc == 0)
 		{
 			Entity* ret = cobj->createEntity();
-			object_to_luaval<Entity>(tolua_S, "cc.RenderController", (Entity*)ret);
+			object_to_luaval<Entity>(tolua_S, "cc.Entity", (Entity*)ret);
 			return 1;
 		}
 	} while (0);
@@ -224,6 +218,54 @@ int lua_cocos2dx_RenderComponent_createEntity(lua_State* tolua_S)
 }
 
 
+static int lua_cocos2dx_RenderController_finalize(lua_State* tolua_S)
+{
+	printf("luabindings: finalizing LUA object (RenderController)");
+	return 0;
+}
+
+int lua_cocos2dx_Entity_constructor(lua_State* tolua_S)
+{
+	int argc = 0;
+
+	Entity* cobj = nullptr;
+	bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+	tolua_Error tolua_err;
+#endif
+
+	argc = lua_gettop(tolua_S) - 1;
+	if (argc == 0)
+	{
+		if (!ok)
+		{
+			tolua_error(tolua_S, "invalid arguments in function 'lua_cocos2dx_Entity_constructor'", nullptr);
+			return 0;
+		}
+		cobj = new Entity();
+		cobj->autorelease();
+		int ID = (int)cobj->_ID;
+		int* luaID = &cobj->_luaID;
+		toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj, "cc.Entity");
+		return 1;
+	}
+	luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.Entity", argc, 0);
+	return 0;
+
+#if COCOS2D_DEBUG >= 1
+	tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_Entity_constructor'.", &tolua_err);
+#endif
+
+	return 0;
+}
+
+static int lua_cocos2dx_Entity_finalize(lua_State* tolua_S)
+{
+	printf("luabindings: finalizing LUA object (Entity)");
+	return 0;
+}
+
 }
 
 using namespace xyGame;
@@ -234,11 +276,27 @@ int lua_register_cocos2dx_RenderController(lua_State* tolua_S)
 	tolua_cclass(tolua_S, "RenderController", "cc.RenderController", "cc.Ref", nullptr);
 	tolua_beginmodule(tolua_S, "RenderController");
 	tolua_function(tolua_S, "new", lua_cocos2dx_RenderComponent_constructor);
-	tolua_function(tolua_S, "testGetID", lua_cocos2dx_RenderComponent_getTestID);
 	tolua_function(tolua_S, "create", lua_cocos2dx_RenderComponent_create);
+	tolua_function(tolua_S, "createEntity", lua_cocos2dx_RenderComponent_createEntity);
 	tolua_endmodule(tolua_S);
 	std::string typeName = typeid(RenderController).name();
 	g_luaType[typeName] = "cc.RenderController";
 	g_typeCast["RenderController"] = "cc.RenderController";
 	return 1;
 }
+
+int lua_register_cocos2dx_Entity(lua_State* tolua_S)
+{
+	tolua_usertype(tolua_S, "cc.Entity");
+	tolua_cclass(tolua_S, "Entity", "cc.Entity", "cc.Ref", nullptr);
+	tolua_beginmodule(tolua_S, "Entity");
+	tolua_function(tolua_S, "new", lua_cocos2dx_Entity_constructor);
+	tolua_function(tolua_S, "do_test", lua_cocos2dx_Entity_getTestID);
+	tolua_endmodule(tolua_S);
+	std::string typeName = typeid(Entity).name();
+	g_luaType[typeName] = "cc.Entity";
+	g_typeCast["Entity"] = "cc.Entity";
+	return 1;
+}
+
+

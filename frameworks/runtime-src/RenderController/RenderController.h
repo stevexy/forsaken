@@ -27,15 +27,14 @@ namespace xyGame {
 		RenderController();
 		~RenderController();
 
-		Entity* createEntity();
+		
 		bool init(void);
 		static RenderController* create(void);
 
 		static void tick(double fixedDelta);
 		static void animate(double delta, double tickPercent);
 
-
-		int testGetID();
+		Entity* createEntity();
 
 	protected:
 #if CC_ENABLE_SCRIPT_BINDING
@@ -47,3 +46,4 @@ namespace xyGame {
 }
 
 int lua_register_cocos2dx_RenderController(lua_State* tolua_S);
+int lua_register_cocos2dx_Entity(lua_State* tolua_S);

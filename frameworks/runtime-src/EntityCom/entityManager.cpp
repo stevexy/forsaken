@@ -19,6 +19,8 @@ namespace xyGame {
 	{
 		m_body = Sprite::create();
 		m_body->retain();
+		m_id = EID;
+		EID++;
 		return false;
 	}
 

@@ -11,6 +11,8 @@ namespace xyGame {
 		Entity();
 		~Entity();
 
+		unsigned int get_eid() { return m_id; }
+		int do_test() { return 111; }
 		bool init(void);
 		static Entity* create(void);
 		unsigned int m_id;

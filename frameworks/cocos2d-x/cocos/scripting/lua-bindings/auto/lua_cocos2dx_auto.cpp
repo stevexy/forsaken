@@ -99897,6 +99897,7 @@ TOLUA_API int register_all_cocos2dx(lua_State* tolua_S)
 
 	//seayoung test lua register function
 	lua_register_cocos2dx_RenderController(tolua_S);
+	lua_register_cocos2dx_Entity(tolua_S);
 
 	tolua_endmodule(tolua_S);
 	return 1;
