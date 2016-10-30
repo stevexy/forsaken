@@ -1,12 +1,15 @@
-local gamePlayer = class("Player", function()
-    return cc.Sprite:create()
-end)
+local gamePlayer = class("Player",{})
 
 function gamePlayer:ctor()
-	self:onCreate()
+--	self:onCreate()
+-- 暂时不要
 end
 
-function gamePlayer:onCreate()
+
+function gamePlayer:setRC(render_controller)
+    self.entity = render_controller:createEntity()
+    self.entity:retain()
+    
     self.vel_x = 0
     self.vel_y = 0
 	self.moving_action = 0
@@ -29,65 +32,51 @@ function gamePlayer:onCreate()
     end
 end
 
+function gamePlayer:getSprite()
+    return self.entity:getSprite()
+end
 
-function gamePlayer:update(dt)
+function gamePlayer:update_direction()
     --如果是grid的话，便每次移动一个grid
-    local speed = 100
-    local x,y = self:getPosition()
     if self.vel_x > 0 then
         self:Walk("right")
-	    self:Move(x+speed*dt,y,dt)
     elseif self.vel_x < 0 then
         self:Walk("left")
-	    self:Move(x-speed*dt,y,dt)
     elseif self.vel_y > 0 then
         self:Walk("up")
-	    self:Move(x,y+speed*dt,dt)
     elseif self.vel_y < 0 then
         self:Walk("down")
-	    self:Move(x,y-speed*dt,dt)
+    else
+        self:Walk("idle")
     end
 end
 
-function gamePlayer:Walk(position)
-	print ('runaction',position)
-    if self.last_action == position then
-        return
-    else
-        self.last_action = position
+function gamePlayer:Walk(dir)
+    if dir == 'left' then
+    	self.entity:setDirection(1)
+    elseif dir == 'right' then
+    	self.entity:setDirection(2)
+    elseif dir == 'up' then
+    	self.entity:setDirection(3)
+    elseif dir == 'down' then
+    	self.entity:setDirection(4)
+    elseif dir == 'idle' then
+    	self.entity:setDirection(0)
     end
-
-
 	local cache = cc.SpriteFrameCache:getInstance()
--- 	local s = cc.Director:getInstance():getWinSize()
---  self:setPosition( cc.p( (s.width/5)*3, (s.height/3)*1) )
-
+    local _spr = self.entity:getSprite()
+    local position = 'idle'
+    if dir ~= 'idle' then
+        position = dir
+    end
     local animFrames = {}
     for i = 1,3 do
-        local frame = cache:getSpriteFrame(string.format("walk_%s_%d",position,i))
+        local frame = cache:getSpriteFrame(string.format("walk_%s_%d",dir,i))
         animFrames[i] = frame
     end
-	self:stopAllActions()
+	_spr:stopAllActions()
     local animation = cc.Animation:createWithSpriteFrames(animFrames, 0.3)
-    self:runAction(cc.RepeatForever:create(cc.Animate:create(animation)))
-end
-
-function gamePlayer:Move(destx,desty,step)
-		local function ActionSequenceCallback1()  
-			self.moving_action = 0
-		end
-		self.moving_action = 1
-		local action = cc.Sequence:create(cc.MoveTo:create(0.2*step, cc.p(destx,desty)), 
-			cc.CallFunc:create(ActionSequenceCallback1))
-	    self:runAction(action)
-end
-
-function gamePlayer:isMoving()
-    if self.moving_action then
-    	return self.moving_action
-    else
-        return 0
-    end
+    _spr:runAction(cc.RepeatForever:create(cc.Animate:create(animation)))
 end
 
 function gamePlayer:get_coord()	

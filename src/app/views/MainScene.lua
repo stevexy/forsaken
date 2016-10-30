@@ -1,4 +1,4 @@
-local Avatar = require("client.avatar")
+local Player = require("client.player")
 local ControlLayer = require("client.stick.stick")
 local math = require("math")
 
@@ -39,7 +39,9 @@ function MainScene:update(dt)
 	if self.player == nil then
 		return
 	end
-	self.player:update(dt)
+--	self.player:update(dt)
+
+-- seayoung update暂时不能用
 
 	-- if self.controller.direction then
 		
@@ -115,21 +117,30 @@ function MainScene:onCreate()
 	xcontrol:addTo(self)
 --  如果没有addto会不会被自动释放?lua会管理好自动的对象，cocos2d呢？
 
-    local _player = Avatar:create()
+    local _player = Player:create()
     self.player = _player
+	_player:setRC(rcer)
+
     --xmap:setPosition(cc.p(0,0))
-    _player:Walk("right")
     
     local layer_terrain = xmap:getLayer('terrain')
     local layer_block = xmap:getLayer('block')
-    xmap:addChild(_player, 5, 0)
+
+	local _spr = _player:getSprite()
+	xmap:addChild(_spr, 5, 0)
+
+	_player:Walk("idle")
+-- seayoung temp
     --print("seayoung test tilemap",xmap:getTileSize().height)
     local tsize = layer_terrain:getLayerSize()
    	local m_x = (tsize.width+1)*xmap:getTileSize().width/2
    	local m_y = (tsize.height+1)*xmap:getTileSize().height/2
     print("seayoung test tilemap",tsize.height,tsize.width)
-    _player:setPosition( cc.p( m_x,m_y ) )
     
+	_spr:setPosition( cc.p( m_x,m_y ) )
+	-- player应该有个函数来封装sprite的使用
+    -- seayoung temp
+
 	local function tileCoordForPosition(_mmap,position)
 	    local x = math.floor(position.x / _mmap:getTileSize().width)
 	    local y = math.floor(((_mmap:getMapSize().height * _mmap:getTileSize().height) - position.y) / _mmap:getTileSize().height)
@@ -140,8 +151,6 @@ function MainScene:onCreate()
 		if keycode == cc.KeyCode.KEY_A then
 			self.player.vel_x = -1
 			self.player.vel_y = 0
-			print("seayoung Entity is ",self.gent)
-			print("seayoung test renderController",self.gent:do_test())
 		elseif keycode == cc.KeyCode.KEY_D then
 			self.player.vel_x = 1
 			self.player.vel_y = 0
@@ -152,6 +161,7 @@ function MainScene:onCreate()
 			self.player.vel_y = 1
 			self.player.vel_x = 0
 		end
+		self.player:update_direction()
 	end
 
 	local function onKeyReleased(keycode, event)
@@ -164,6 +174,7 @@ function MainScene:onCreate()
 		elseif keycode == cc.KeyCode.KEY_W then
 			self.player.vel_y = 0
 		end
+		self.player:update_direction()
 	end
 
     local listenerKeyboard=cc.EventListenerKeyboard:create()
@@ -175,9 +186,6 @@ function MainScene:onCreate()
     -- xmap:getTileSize().width/2+100, xmap:getTileSize().height/2+100) )
 	--xmap:setScale(2)		--setScale֮���жϵ���������Ҳ�ı���
     local function onTouchesEnded(touches, event )
-    	if _player:isMoving()==1 then
-    		return
-    	end
         local p = touches[1]:getLocation()
         
         local pos = layer_terrain:convertToNodeSpace(p)

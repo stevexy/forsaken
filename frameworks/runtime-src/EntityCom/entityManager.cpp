@@ -6,7 +6,8 @@ namespace xyGame {
 
 	Entity::Entity()
 	:m_body(nullptr),
-	m_id(0)
+	m_id(0),
+	_speed(60)
 	{
 	}
 
@@ -32,4 +33,48 @@ namespace xyGame {
 		return pent;
 	}
 
+	void Entity::set_direction(int dir)
+	{
+		switch (dir)
+		{
+			case 1:
+				_direction = left;
+				break;
+			case 2:
+				_direction = right;
+				break;
+			case 3:
+				_direction = up;
+				break;
+			case 4:
+				_direction = down;
+				break;
+			default:
+				_direction = idle;
+		}
+	}
+	void Entity::update(float deltatime)
+	{
+		Vec2 position = m_body->getPosition();
+		switch (_direction)
+		{
+		case xyGame::idle:
+			break;
+		case xyGame::left:
+			position.x -= _speed*deltatime;
+			break;
+		case xyGame::right:
+			position.x += _speed*deltatime;
+			break;
+		case xyGame::up:
+			position.y += _speed*deltatime;
+			break;
+		case xyGame::down:
+			position.y -= _speed*deltatime;
+			break;
+		default:
+			break;
+		}
+		m_body->setPosition(position);
+	}
 }

@@ -14,6 +14,8 @@
 using namespace std;
 using namespace cocos2d;
 
+
+
 namespace xyGame {
 	typedef map<unsigned int, Entity *> ENT_MAP;
 
@@ -23,6 +25,8 @@ namespace xyGame {
 		static unsigned int ent_id;
 
 	public:
+		static RenderController* renderControllerObj;
+		static RenderController* getInstance();
 		//	struct Ent;
 		RenderController();
 		~RenderController();
@@ -31,8 +35,8 @@ namespace xyGame {
 		bool init(void);
 		static RenderController* create(void);
 
-		static void tick(double fixedDelta);
-		static void animate(double delta, double tickPercent);
+		void update(float fixedDelta);
+		void animate(double delta, double tickPercent);
 
 		Entity* createEntity();
 
@@ -43,6 +47,7 @@ namespace xyGame {
 #endif
 
 	};
+	
 }
 
 int lua_register_cocos2dx_RenderController(lua_State* tolua_S);
