@@ -5,7 +5,8 @@ namespace xyGame {
 	unsigned int Entity::EID(1);
 
 	Entity::Entity()
-	:m_body(nullptr),
+	:root_node(nullptr),
+	m_body(nullptr),
 	m_id(0),
 	_speed(60)
 	{
@@ -14,12 +15,15 @@ namespace xyGame {
 	Entity::~Entity()
 	{
 		CC_SAFE_RELEASE(m_body);
+		CC_SAFE_RELEASE(root_node);
 	}
 
 	bool Entity::init(void)
 	{
+		root_node = Node::create();
+		root_node->retain();
 		m_body = Sprite::create();
-		m_body->retain();
+		root_node->addChild(m_body,3);
 		m_id = EID;
 		EID++;
 		return false;
@@ -55,7 +59,7 @@ namespace xyGame {
 	}
 	void Entity::update(float deltatime)
 	{
-		Vec2 position = m_body->getPosition();
+		Vec2 position = root_node->getPosition();
 		switch (_direction)
 		{
 		case xyGame::idle:
@@ -75,6 +79,6 @@ namespace xyGame {
 		default:
 			break;
 		}
-		m_body->setPosition(position);
+		root_node->setPosition(position);
 	}
 }

@@ -3,6 +3,8 @@ local gamePlayer = class("Player",{})
 function gamePlayer:ctor()
 --	self:onCreate()
 -- 暂时不要
+    self.last_action = 'down'
+    self.attacking = false
 end
 
 
@@ -30,10 +32,20 @@ function gamePlayer:setRC(render_controller)
         local frame = cc.SpriteFrame:create( "res/101.png", cc.rect((i-1)*46, 108, 32, 36) )
         cache:addSpriteFrame(frame,string.format("walk_left_%d",i))
     end
+
+    self.weapon = cc.Sprite:create( "res/sword1.png")
+    local root = self:getRoot()
+    root:addChild(self.weapon, 4, 0)
+    self.weapon:setAnchorPoint({0.5,0})
+    --self.weapon:setScale(2)
 end
 
 function gamePlayer:getSprite()
     return self.entity:getSprite()
+end
+
+function gamePlayer:getRoot()
+    return self.entity:getRoot()
 end
 
 function gamePlayer:update_direction()
@@ -51,11 +63,49 @@ function gamePlayer:update_direction()
     end
 end
 
+function gamePlayer:attack()
+    if self.attacking == true then
+        return
+    end
+    local function action_done()
+        self.attacking = false
+    end
+    self.attacking = true
+    local actionBy = cc.RotateBy:create(0.1 , 180)
+    local actionByBack = actionBy:reverse()
+    local callfunc = cc.CallFunc:create(action_done)
+    self.weapon:runAction(cc.Sequence:create(actionBy, actionByBack, callfunc))
+end
+
+
+
+function gamePlayer:setWeaponPos(dir)
+    local bb = self.weapon:getBoundingBox()
+    print ('sword bounding box',bb.x,bb.y)
+    if dir == 'left' then
+    	self.weapon:setPosition( cc.p( -6+bb.width/2,0 ) )
+        self.weapon:setLocalZOrder(2)
+    elseif dir == 'right' then
+    	self.weapon:setPosition( cc.p( -4+bb.width/2,-10 ) )
+        self.weapon:setLocalZOrder(4)
+    elseif dir == 'up' then
+    	self.weapon:setPosition( cc.p( 10+bb.width/2,-6 ) )
+        self.weapon:setLocalZOrder(2)
+    elseif dir == 'down' then
+    	self.weapon:setPosition( cc.p( -7-bb.width/2,-10 ) )
+        self.weapon:setLocalZOrder(4)
+    elseif dir == 'idle' then
+    	self.weapon:setPosition( cc.p( -7-bb.width/2,-10 ) )
+        self.weapon:setLocalZOrder(4)
+    end
+end
+
 function gamePlayer:Walk(dir)
+    
     if dir == 'left' then
     	self.entity:setDirection(1)
     elseif dir == 'right' then
-    	self.entity:setDirection(2)
+        self.entity:setDirection(2)
     elseif dir == 'up' then
     	self.entity:setDirection(3)
     elseif dir == 'down' then
@@ -68,10 +118,21 @@ function gamePlayer:Walk(dir)
     local position = 'idle'
     if dir ~= 'idle' then
         position = dir
+    else
+        self.last_action = position
+        return
     end
+    self:setWeaponPos(dir)
+
+    if self.last_action == position then
+        return
+    else
+        self.last_action = position
+    end 
+
     local animFrames = {}
     for i = 1,3 do
-        local frame = cache:getSpriteFrame(string.format("walk_%s_%d",dir,i))
+        local frame = cache:getSpriteFrame(string.format("walk_%s_%d",position,i))
         animFrames[i] = frame
     end
 	_spr:stopAllActions()

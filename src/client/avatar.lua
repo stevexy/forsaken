@@ -27,6 +27,7 @@ function gamePlayer:onCreate()
         local frame = cc.SpriteFrame:create( "res/101.png", cc.rect((i-1)*46, 108, 32, 36) )
         cache:addSpriteFrame(frame,string.format("walk_left_%d",i))
     end
+
 end
 
 

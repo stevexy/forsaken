@@ -189,6 +189,51 @@ namespace xyGame {
 		return 0;
 	}
 
+	int lua_cocos2dx_Entity_getRoot(lua_State* tolua_S)
+	{
+		int argc = 0;
+		Entity* cobj = nullptr;
+		bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+		tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+		if (!tolua_isusertype(tolua_S, 1, "cc.Entity", 0, &tolua_err)) goto tolua_lerror;
+#endif
+
+		cobj = (Entity*)tolua_tousertype(tolua_S, 1, 0);
+
+#if COCOS2D_DEBUG >= 1
+		if (!cobj)
+		{
+			tolua_error(tolua_S, "invalid 'cobj' in function 'lua_cocos2dx_Entity_getRoot'", nullptr);
+			return 0;
+		}
+#endif
+
+		argc = lua_gettop(tolua_S) - 1;
+		if (argc == 0)
+		{
+			Node* ret = cobj->get_root();
+			//		lua_settop(tolua_S, 1);
+			object_to_luaval<Sprite>(tolua_S, "cc.Node", (cocos2d::Sprite*)ret);
+			//		tolua_pushnumber(tolua_S, (lua_Number)ret);
+			return 1;
+		}
+		luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.Entity:getRoot", argc, 1);
+		return 0;
+
+#if COCOS2D_DEBUG >= 1
+		tolua_lerror:
+					tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_Entity_getRoot'.", &tolua_err);
+#endif
+
+					return 0;
+	}
+
 	int lua_cocos2dx_Entity_setDirection(lua_State* tolua_S)
 	{
 		int argc = 0;
@@ -361,6 +406,7 @@ int lua_register_cocos2dx_Entity(lua_State* tolua_S)
 	tolua_beginmodule(tolua_S, "Entity");
 	tolua_function(tolua_S, "new", lua_cocos2dx_Entity_constructor);
 	tolua_function(tolua_S, "getSprite", lua_cocos2dx_Entity_getSprite);
+	tolua_function(tolua_S, "getRoot", lua_cocos2dx_Entity_getRoot);
 	tolua_function(tolua_S, "setDirection", lua_cocos2dx_Entity_setDirection);
 	tolua_endmodule(tolua_S);
 	std::string typeName = typeid(Entity).name();

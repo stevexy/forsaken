@@ -126,7 +126,7 @@ function MainScene:onCreate()
     local layer_terrain = xmap:getLayer('terrain')
     local layer_block = xmap:getLayer('block')
 
-	local _spr = _player:getSprite()
+	local _spr = _player:getRoot()
 	xmap:addChild(_spr, 5, 0)
 
 	_player:Walk("idle")
@@ -160,6 +160,8 @@ function MainScene:onCreate()
 		elseif keycode == cc.KeyCode.KEY_W then
 			self.player.vel_y = 1
 			self.player.vel_x = 0
+		elseif keycode == cc.KeyCode.KEY_K then
+			self.player:attack()
 		end
 		self.player:update_direction()
 	end
@@ -255,7 +257,7 @@ function MainScene:onCreate()
 		        else
 		            _player:Walk("down")
 		            _player:Move(x,desy,0.5)
-		        end		    
+		        end
 		end
 	end
 
