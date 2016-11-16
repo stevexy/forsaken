@@ -69,9 +69,14 @@ function gamePlayer:attack()
     end
     local function action_done()
         self.attacking = false
+        self:setWeaponPos(self.last_action)
     end
     self.attacking = true
-    local actionBy = cc.RotateBy:create(0.1 , 180)
+    local angle = 180
+    if table.keyof({"left","up"},self.last_action) then
+        angle = -180
+    end
+    local actionBy = cc.RotateBy:create(0.1 , angle)
     local actionByBack = actionBy:reverse()
     local callfunc = cc.CallFunc:create(action_done)
     self.weapon:runAction(cc.Sequence:create(actionBy, actionByBack, callfunc))
@@ -80,22 +85,22 @@ end
 
 
 function gamePlayer:setWeaponPos(dir)
-    local bb = self.weapon:getBoundingBox()
-    print ('sword bounding box',bb.x,bb.y)
+    local bb = self.weapon:getContentSize()
+    print ('sword bounding box',bb.width,bb.height)
     if dir == 'left' then
-    	self.weapon:setPosition( cc.p( -6+bb.width/2,0 ) )
+    	self.weapon:setPosition( cc.p( -10+bb.width/2,0 ) )
         self.weapon:setLocalZOrder(2)
     elseif dir == 'right' then
-    	self.weapon:setPosition( cc.p( -4+bb.width/2,-10 ) )
+    	self.weapon:setPosition( cc.p( -8+bb.width/2,-10 ) )
         self.weapon:setLocalZOrder(4)
     elseif dir == 'up' then
-    	self.weapon:setPosition( cc.p( 10+bb.width/2,-6 ) )
+    	self.weapon:setPosition( cc.p( 6+bb.width/2,-6 ) )
         self.weapon:setLocalZOrder(2)
     elseif dir == 'down' then
-    	self.weapon:setPosition( cc.p( -7-bb.width/2,-10 ) )
+    	self.weapon:setPosition( cc.p( -10-bb.width/2,-10 ) )
         self.weapon:setLocalZOrder(4)
     elseif dir == 'idle' then
-    	self.weapon:setPosition( cc.p( -7-bb.width/2,-10 ) )
+    	self.weapon:setPosition( cc.p( -10-bb.width/2,-10 ) )
         self.weapon:setLocalZOrder(4)
     end
 end
@@ -119,16 +124,16 @@ function gamePlayer:Walk(dir)
     if dir ~= 'idle' then
         position = dir
     else
-        self.last_action = position
         return
     end
-    self:setWeaponPos(dir)
-
-    if self.last_action == position then
-        return
-    else
+    
+    if self.last_action ~= position then
         self.last_action = position
-    end 
+    else
+        return
+    end
+
+    self:setWeaponPos(position)
 
     local animFrames = {}
     for i = 1,3 do
